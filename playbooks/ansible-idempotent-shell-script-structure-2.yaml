@@ -1,0 +1,11 @@
+---
+
+- name: Check if <PACKAGE-NAME> is installed
+  shell: <PACKAGE-NAME> --version
+  register: version_cmd
+  changed_when: false
+  ignore_errors: true
+
+- name: Install <PACKAGE-NAME>
+  shell: wget -qO- <PACKAGE-INSTALLATION-BASH-SCRIPT-LINK> | bash
+  when: version_cmd is failed

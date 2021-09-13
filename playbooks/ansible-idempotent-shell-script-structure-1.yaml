@@ -1,0 +1,10 @@
+---
+
+# Change <PACKAGE-NAME> with your package name that you want install
+- name: Put <PACKAGE-NAME> package on hold
+  shell: >
+         apt-mark showholds | grep -q <PACKAGE-NAME>
+         && echo -n HOLDED
+         || apt-mark hold <PACKAGE-NAME>
+  register: holder_var
+  changed_when: holder_var.stdout != 'HOLDED'
