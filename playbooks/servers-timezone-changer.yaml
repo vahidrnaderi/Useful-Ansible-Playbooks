@@ -1,0 +1,30 @@
+---
+
+# Change all servers time zone from utc to your own time zone just
+# by changing <Asia/Tehran> to your time zone name.
+
+  - hosts: all
+    become: true
+
+    tasks:
+
+      - name: Get current time zone
+        shell: cat /etc/timezone  
+        register: resault
+        changed_when: false
+        ignore_errors: true
+
+      - name: Change time zone to Asia/Tehran
+        shell: timedatectl set-timezone Asia/Tehran
+        when: resault['stdout_lines'][0] != "Asia/Tehran"
+        notify: 
+          - Reconfigure time zone
+    
+    handlers:
+      - name: Reconfigure time zone
+        shell: dpkg-reconfigure --frontend noninteractive tzdata
+        notify:
+          - Reset syslog service
+
+      - name: Reset syslog service
+        shell: service rsyslog restart
